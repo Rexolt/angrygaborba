@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/LevelSelect.gd" id=1]
+
+[node name="LevelSelect" type="Control"]
+script = ExtResource(1)
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.2
+anchor_right = 0.5
+anchor_bottom = 0.2
+offset_left = -120.0
+offset_right = 120.0
+offset_top = -16.0
+offset_bottom = 16.0
+text = "Pályaválasztó"
+
+[node name="List" type="HBoxContainer" parent="."]
+anchor_left = 0.1
+anchor_right = 0.9
+anchor_top = 0.8
+anchor_bottom = 0.9
+alignment = 1

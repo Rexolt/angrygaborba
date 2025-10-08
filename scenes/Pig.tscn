@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://d0jdbkj46w70s"]
+
+[ext_resource type="Script" uid="uid://333fcmgyo5mx" path="res://scripts/Pig.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://buyb8eaqmv7ku" path="res://art/pig.png" id="2"]
+
+[sub_resource type="CircleShape2D" id="1"]
+radius = 22.0
+
+[node name="Pig" type="RigidBody2D"]
+contact_monitor = true
+script = ExtResource("1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1")

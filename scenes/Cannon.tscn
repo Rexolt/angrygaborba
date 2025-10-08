@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://du34fp6t1qtpb"]
+
+[ext_resource type="Script" uid="uid://b2sgkyb17e41y" path="res://scripts/Cannon.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://blmj3sfwvnua5" path="res://art/cannon_idle.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://di5ol5dljkfh3" path="res://art/cannon_fire.png" id="3_cvoka"]
+
+[node name="Cannon" type="Node2D"]
+rotation = -0.4
+script = ExtResource("1")
+idle_texture = ExtResource("2")
+fire_texture = ExtResource("3_cvoka")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(60, 0)

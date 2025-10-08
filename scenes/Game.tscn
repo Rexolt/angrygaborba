@@ -1,0 +1,83 @@
+[gd_scene load_steps=9 format=3 uid="uid://dn85gdm07ey1q"]
+
+[ext_resource type="PackedScene" path="res://scenes/Cannon.tscn" id="1_cpr0p"]
+[ext_resource type="PackedScene" path="res://ui/HUD.tscn" id="2_78awf"]
+[ext_resource type="PackedScene" path="res://ui/LevelSelect.tscn" id="3_s0nni"]
+[ext_resource type="Script" path="res://scripts/Game.gd" id="4_gscript"]
+[ext_resource type="Script" path="res://scripts/Sky.gd" id="5_sky"]
+[ext_resource type="Script" path="res://scripts/Mountains.gd" id="6_mtn"]
+[ext_resource type="Script" path="res://scripts/CloudLayer.gd" id="7_clouds"]
+[ext_resource type="Script" path="res://scripts/GroundVisual.gd" id="8_groundviz"]
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(100000, 40)
+
+[node name="Game" type="Node2D"]
+script = ExtResource("4_gscript")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+; -- Távoli ég (világoskék) --
+[node name="SkyLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.1, 0.1)
+
+[node name="Sky" type="Node2D" parent="ParallaxBackground/SkyLayer"]
+script = ExtResource("5_sky")
+
+; -- Távoli hegyek --
+[node name="MountainsFarLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.3, 0.3)
+
+[node name="MountainsFar" type="Node2D" parent="ParallaxBackground/MountainsFarLayer"]
+script = ExtResource("6_mtn")
+color = Color(0.639216, 0.737255, 0.823529, 1.0)      ; #a3bcd6
+base_ratio = 0.6
+rough = 140
+freq = 0.003
+amp = 0.8
+
+; -- Közeli hegyek / dombok --
+[node name="MountainsNearLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.6, 0.6)
+
+[node name="MountainsNear" type="Node2D" parent="ParallaxBackground/MountainsNearLayer"]
+script = ExtResource("6_mtn")
+color = Color(0.435294, 0.690196, 0.435294, 1.0)      ; #6fb06f
+base_ratio = 0.75
+rough = 90
+freq = 0.004
+amp = 0.6
+
+; -- Felhők --
+[node name="CloudsLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.2, 0.2)
+
+[node name="Clouds" type="Node2D" parent="ParallaxBackground/CloudsLayer"]
+script = ExtResource("7_clouds")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("1")
+
+; -- Föld vizuál (a StaticBody2D pozíciója alapján rajzol) --
+[node name="GroundVisual" type="Node2D" parent="."]
+script = ExtResource("8_groundviz")
+
+[node name="Cannon" parent="." instance=ExtResource("1_cpr0p")]
+
+[node name="LevelRoot (Node2D)" type="Node2D" parent="."]
+
+[node name="ParticlesRoot (Node2D)" type="Node2D" parent="."]
+
+[node name="Hud" parent="." instance=ExtResource("2_78awf")]
+layout_mode = 3
+anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LevelSelect" parent="." instance=ExtResource("3_s0nni")]
+layout_mode = 3
+anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2

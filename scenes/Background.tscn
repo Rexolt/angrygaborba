@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/Sky.gd" id=1]
+[ext_resource type="Script" path="res://scripts/Mountains.gd" id=2]
+[ext_resource type="Script" path="res://scripts/CloudLayer.gd" id=3]
+
+[node name="Background" type="ParallaxBackground"]
+
+[node name="SkyLayer" type="ParallaxLayer" parent="."]
+motion_scale = Vector2(0.1, 0.1)
+
+[node name="Sky" type="Node2D" parent="SkyLayer"]
+script = ExtResource(1)
+
+[node name="MountainsFarLayer" type="ParallaxLayer" parent="."]
+motion_scale = Vector2(0.3, 0.3)
+
+[node name="MountainsFar" type="Node2D" parent="MountainsFarLayer"]
+script = ExtResource(2)
+color = Color(0.64, 0.74, 0.84)        # #a3bcd6
+amp = 0.8
+freq = 0.003
+rough = 140
+base_ratio = 0.6
+
+[node name="MountainsNearLayer" type="ParallaxLayer" parent="."]
+motion_scale = Vector2(0.6, 0.6)
+
+[node name="MountainsNear" type="Node2D" parent="MountainsNearLayer"]
+script = ExtResource(2)
+color = Color(0.44, 0.69, 0.44)        # #6fb06f
+amp = 0.6
+freq = 0.004
+rough = 90
+base_ratio = 0.75
+
+[node name="CloudsLayer" type="ParallaxLayer" parent="."]
+motion_scale = Vector2(0.2, 0.2)
+
+[node name="Clouds" type="Node2D" parent="CloudsLayer"]
+script = ExtResource(3)
