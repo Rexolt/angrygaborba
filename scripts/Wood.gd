@@ -14,25 +14,34 @@ var _spawn_time: float = 0.0
 func _ready() -> void:
 	_spawn_time = float(Time.get_ticks_msec()) / 1000.0
 
-	# Anyagtulajdonságok – reaktívabb fa
-	var pm: PhysicsMaterial = PhysicsMaterial.new()
-	pm.friction = 0.6       # kicsit csúszósabb
-	pm.bounce = 0.25        # több energia marad ütközéskor
+	var pm := PhysicsMaterial.new()
+	pm.friction = 0.6
+	pm.bounce = 0.25
 	physics_material_override = pm
 
-	# Kisebb csillapítás -> mozgékonyabb test
 	linear_damp = 0.5
 	angular_damp = 0.5
 
-	# Több ütközés detektálása
 	contact_monitor = true
 	max_contacts_reported = 10
 
 func setup_size(size: Vector2) -> void:
-	var rs: Shape2D = col.shape
-	if rs is RectangleShape2D:
-		var rect := rs as RectangleShape2D
-		rect.size = size
+	# ⚙ új collider létrehozása
+	if col:
+		col.queue_free()
+	col = CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = size
+	col.shape = rect
+	add_child(col)
+
+	# sprite is arányosan skálázva legyen
+	var base_tex_size: Vector2 = sprite.texture.get_size()
+	sprite.scale = size / base_tex_size
+
+	# collider a textúrához igazítva
+	col.position = Vector2.ZERO
+	col.rotation = 0.0  # forgás a testre lesz bízva
 
 func apply_damage(d: float) -> void:
 	var dmg: float = min(d, hp)
@@ -51,7 +60,6 @@ func _integrate_forces(_state: PhysicsDirectBodyState2D) -> void:
 	var v: float = linear_velocity.length()
 	var w: float = absf(angular_velocity)
 
-	# Érzékenyebb küszöbök
 	var lin_threshold: float = 40.0
 	var ang_threshold: float = 0.8
 

@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://bla0ejk8pprs0"]
+
+[ext_resource type="Script" uid="uid://bb1aydhbhshsu" path="res://scripts/MainMenu.gd" id="1_2f5qk"]
+
+[node name="MainMenu" type="CanvasLayer"]
+script = ExtResource("1_2f5qk")
+
+[node name="Title" type="Label" parent="."]
+offset_top = 40.0
+offset_right = 1280.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 64
+text = "Angry Gáborbá"
+horizontal_alignment = 1
+
+[node name="CannonSprite" type="Sprite2D" parent="."]
+position = Vector2(640, 250)
+scale = Vector2(0.5, 0.5)
+
+[node name="Buttons" type="VBoxContainer" parent="."]
+offset_left = 540.0
+offset_top = 400.0
+offset_right = 740.0
+offset_bottom = 600.0
+theme_override_constants/separation = 12
+
+[node name="PlayButton" type="Button" parent="Buttons"]
+layout_mode = 2
+text = "▶ Játék indítása"
+
+[node name="SettingsButton" type="Button" parent="Buttons"]
+layout_mode = 2
+text = "⚙ Beállítások"
+
+[node name="CreditsButton" type="Button" parent="Buttons"]
+layout_mode = 2
+text = "👤 Készítők"
