@@ -1,26 +1,34 @@
 extends Node2D
 
+# --- Alap node-hivatkozások ---
 @onready var cannon: Node2D = $Cannon
 @onready var static_body: StaticBody2D = $StaticBody2D
 @onready var level_root: Node2D = $"LevelRoot (Node2D)"
 @onready var hud: Control = $Hud
 @onready var level_select: Control = $LevelSelect
-@onready var main_menu: CanvasLayer = preload("res://ui/MainMenu.tscn").instantiate()
 
+# --- Főmenü scene betöltése biztonságosan ---
+var MainMenuScene: PackedScene = preload("res://ui/MainMenu.tscn")
+@onready var main_menu: CanvasLayer = MainMenuScene.instantiate() as CanvasLayer
+
+# --- Egyéb erőforrások ---
 const LevelDBRes := preload("res://scripts/LevelDB.gd")
-
 var BirdScene: PackedScene = preload("res://scenes/Bird.tscn")
 var PigScene: PackedScene = preload("res://scenes/Pig.tscn")
 var WoodScene: PackedScene = preload("res://scenes/Wood.tscn")
 var ExplosionScene: PackedScene = preload("res://scenes/Explosion.tscn")
 
+# --- Alap konstansok és állapotváltozók ---
 const BASE_X: float = 500.0
-
 var current_level: int = 0
 var score: int = 0
 var birds_left: int = 0
 var game_over: bool = false
 
+
+# =====================
+#   INIT
+# =====================
 func _ready() -> void:
 	# biztosítjuk, hogy legyen shape a talajon
 	var col: CollisionShape2D = static_body.get_node("CollisionShape2D")
@@ -29,44 +37,46 @@ func _ready() -> void:
 		rs.size = Vector2(100000.0, 60.0)
 		col.shape = rs
 
-	# ⚙️ Főmenü inicializálása (mindig fusson le)
+	# --- főmenü hozzáadása ---
 	add_child(main_menu)
-	main_menu.play_pressed.connect(_on_menu_play)
-	main_menu.settings_pressed.connect(_on_menu_settings)
-	main_menu.credits_pressed.connect(_on_menu_credits)
+	if main_menu.has_signal("play_pressed"):
+		main_menu.play_pressed.connect(_on_menu_play)
+	if main_menu.has_signal("settings_pressed"):
+		main_menu.settings_pressed.connect(_on_menu_settings)
+	if main_menu.has_signal("credits_pressed"):
+		main_menu.credits_pressed.connect(_on_menu_credits)
 	main_menu.visible = true
+	print("✅ MainMenu betöltve és aktív")
 
-	print("✅ MainMenu betöltve és látható")
-
+	# viewport-változás figyelése
 	get_viewport().size_changed.connect(func() -> void:
 		_place_ground()
 		_place_cannon()
 	)
 	_place_ground()
 	_place_cannon()
-
 	_add_side_walls()
 
-	# LevelSelect jelek
+	# LevelSelect és HUD jelek
 	if level_select.has_signal("level_chosen"):
 		level_select.connect("level_chosen", Callable(self, "_on_level_chosen"))
-
-	# HUD jelek
-	if hud.has_signal("restart_pressed"): hud.connect("restart_pressed", Callable(self, "_on_restart"))
-	if hud.has_signal("pause_toggled"): hud.connect("pause_toggled", Callable(self, "_on_pause"))
-	if hud.has_signal("back_to_levels"): hud.connect("back_to_levels", Callable(self, "_on_back_to_levels"))
-	if hud.has_signal("next_level"): hud.connect("next_level", Callable(self, "_on_next_level"))
+	if hud.has_signal("restart_pressed"):
+		hud.connect("restart_pressed", Callable(self, "_on_restart"))
+	if hud.has_signal("pause_toggled"):
+		hud.connect("pause_toggled", Callable(self, "_on_pause"))
+	if hud.has_signal("back_to_levels"):
+		hud.connect("back_to_levels", Callable(self, "_on_back_to_levels"))
+	if hud.has_signal("next_level"):
+		hud.connect("next_level", Callable(self, "_on_next_level"))
 
 	cannon.set("game", self)
-	
-	# ⚠️ NE indítsa el azonnal a játékot — menüvel kezdünk
+	# Nem indítunk pályát automatikusan, először menü jelenjen meg
 	# show_level_select()
 
 
 # =====================
-# Elhelyezés és pályaépítés
+#   ELHELYEZÉS ÉS PÁLYA
 # =====================
-
 func _place_ground() -> void:
 	var h: float = get_viewport_rect().size.y
 	static_body.position.y = floor(h * 0.85)
@@ -108,25 +118,23 @@ func show_level_select() -> void:
 
 
 # =====================
-# FŐMENÜ JELEK
+#   FŐMENÜ JELEK
 # =====================
-
 func _on_menu_play() -> void:
-	print("▶ Játék indítása gomb megnyomva")
+	print("▶ Játék indítása megnyomva")
 	main_menu.visible = false
 	show_level_select()
 
 func _on_menu_settings() -> void:
-	print("⚙ Beállítások menü – később popup jöhet ide")
+	print("⚙ Beállítások menü (még üres)")
 
 func _on_menu_credits() -> void:
-	print("👤 Készítők – később megjeleníthető popup")
+	print("ℹ Készítők popup megnyitása (handled in MainMenu)")
 
 
 # =====================
-# SZINT ÉPÍTÉS
+#   SZINTÉPÍTÉS
 # =====================
-
 func start_level(idx: int) -> void:
 	current_level = idx
 	level_select.visible = false
@@ -157,22 +165,18 @@ func start_level(idx: int) -> void:
 		var b: Dictionary = b_any
 		var w: RigidBody2D = WoodScene.instantiate()
 		level_root.add_child(w)
-
-		# 🔧 Először a forgatás, aztán a collider setup
 		w.rotation = float(b.get("a", 0.0))
 		w.setup_size(Vector2(float(b["w"]), float(b["h"])))
 		w.position = Vector2(BASE_X + float(b["x"]), ground_y + float(b["y"]))
-		
-		# Stabilizálás – hogy ne pattanjanak szét indításkor
+		# Stabilizálás – ne robbanjanak szét spawnkor
 		w.freeze = true
 		await get_tree().process_frame
 		w.freeze = false
 
 
 # =====================
-# Lövés és madarak
+#   LÖVÉS ÉS MADARAK
 # =====================
-
 func _on_level_chosen(idx: int) -> void:
 	start_level(idx)
 
@@ -180,7 +184,8 @@ func fire_next_bird(velocity: Vector2) -> void:
 	if birds_left <= 0 or game_over:
 		return
 	birds_left -= 1
-	if hud.has_method("set_birds_left"): hud.call("set_birds_left", birds_left)
+	if hud.has_method("set_birds_left"):
+		hud.call("set_birds_left", birds_left)
 
 	var b: RigidBody2D = BirdScene.instantiate()
 	level_root.add_child(b)
@@ -199,9 +204,8 @@ func activate_flying_bird() -> void:
 
 
 # =====================
-# HUD jelek
+#   HUD JELEK
 # =====================
-
 func _on_restart() -> void:
 	start_level(current_level)
 
