@@ -1,24 +1,24 @@
 extends Node2D
 
-# --- Alap node-hivatkozások ---
+
 @onready var cannon: Node2D = $Cannon
 @onready var static_body: StaticBody2D = $StaticBody2D
 @onready var level_root: Node2D = $"LevelRoot (Node2D)"
 @onready var hud: Control = $Hud
 @onready var level_select: Control = $LevelSelect
 
-# --- Főmenü scene betöltése biztonságosan ---
+
 var MainMenuScene: PackedScene = preload("res://ui/MainMenu.tscn")
 @onready var main_menu: CanvasLayer = MainMenuScene.instantiate() as CanvasLayer
 
-# --- Egyéb erőforrások ---
+
 const LevelDBRes := preload("res://scripts/LevelDB.gd")
 var BirdScene: PackedScene = preload("res://scenes/Bird.tscn")
 var PigScene: PackedScene = preload("res://scenes/Pig.tscn")
 var WoodScene: PackedScene = preload("res://scenes/Wood.tscn")
 var ExplosionScene: PackedScene = preload("res://scenes/Explosion.tscn")
 
-# --- Alap konstansok és állapotváltozók ---
+
 const BASE_X: float = 500.0
 var current_level: int = 0
 var score: int = 0
@@ -26,9 +26,7 @@ var birds_left: int = 0
 var game_over: bool = false
 
 
-# =====================
-#   INIT
-# =====================
+
 func _ready() -> void:
 	# biztosítjuk, hogy legyen shape a talajon
 	var col: CollisionShape2D = static_body.get_node("CollisionShape2D")
@@ -46,7 +44,7 @@ func _ready() -> void:
 	if main_menu.has_signal("credits_pressed"):
 		main_menu.credits_pressed.connect(_on_menu_credits)
 	main_menu.visible = true
-	print("✅ MainMenu betöltve és aktív")
+	print(" MainMenu betöltve és aktív")
 
 	# viewport-változás figyelése
 	get_viewport().size_changed.connect(func() -> void:
@@ -74,9 +72,7 @@ func _ready() -> void:
 	# show_level_select()
 
 
-# =====================
-#   ELHELYEZÉS ÉS PÁLYA
-# =====================
+
 func _place_ground() -> void:
 	var h: float = get_viewport_rect().size.y
 	static_body.position.y = floor(h * 0.85)
@@ -117,9 +113,9 @@ func show_level_select() -> void:
 	if hud.has_method("set_level_info"): hud.call("set_level_info", 0, LevelDBRes.LEVELS.size())
 
 
-# =====================
+
 #   FŐMENÜ JELEK
-# =====================
+
 func _on_menu_play() -> void:
 	print("▶ Játék indítása megnyomva")
 	main_menu.visible = false
@@ -132,9 +128,9 @@ func _on_menu_credits() -> void:
 	print("ℹ Készítők popup megnyitása (handled in MainMenu)")
 
 
-# =====================
+
 #   SZINTÉPÍTÉS
-# =====================
+
 func start_level(idx: int) -> void:
 	current_level = idx
 	level_select.visible = false
@@ -174,9 +170,9 @@ func start_level(idx: int) -> void:
 		w.freeze = false
 
 
-# =====================
+
 #   LÖVÉS ÉS MADARAK
-# =====================
+
 func _on_level_chosen(idx: int) -> void:
 	start_level(idx)
 
@@ -203,9 +199,8 @@ func activate_flying_bird() -> void:
 				break
 
 
-# =====================
 #   HUD JELEK
-# =====================
+
 func _on_restart() -> void:
 	start_level(current_level)
 

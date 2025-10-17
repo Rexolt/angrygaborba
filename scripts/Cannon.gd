@@ -4,7 +4,7 @@ extends Node2D
 @export var min_angle: float = -PI * 0.85
 @export var max_angle: float = -PI * 0.05
 
-# 🔥 Ágyú villanás (lövés animáció)
+
 @export var fire_flash_time: float = 0.18
 @export var idle_texture: Texture2D
 @export var fire_texture: Texture2D
@@ -33,7 +33,7 @@ func current_launch_velocity() -> Vector2:
 	else:
 		return Vector2(cos(rotation), sin(rotation)) * base_power * 0.7
 
-# 🧠 EGYSÉGES inputkezelés – egér + érintés
+
 func _unhandled_input(event: InputEvent) -> void:
 	var pos := Vector2.ZERO
 
@@ -49,7 +49,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	else:
 		return
 
-	# --- Mozgatás / célzás ---
+	
 	if event is InputEventMouseMotion or event is InputEventScreenDrag:
 		if not dragging:
 			var to_angle: float = (pos - global_position).angle()
@@ -59,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
-	# --- Húzás kezdete ---
+	
 	if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed) \
 	or (event is InputEventScreenTouch and event.pressed):
 		dragging = true
@@ -68,7 +68,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
-	# --- Húzás vége, lövés ---
+	
 	if (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed) \
 	or (event is InputEventScreenTouch and not event.pressed):
 		if dragging:
@@ -77,7 +77,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 
-# --- Lövés + villanás ---
+
 func _fire_now() -> void:
 	if game != null:
 		game.call("fire_next_bird", current_launch_velocity())
