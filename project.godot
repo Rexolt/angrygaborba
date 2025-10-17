@@ -15,6 +15,12 @@ run/main_scene="uid://dn85gdm07ey1q"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/aspect="expand"
+
 [input]
 
 aim_start={

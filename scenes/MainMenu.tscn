@@ -1,9 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bla0ejk8pprs0"]
-
-[ext_resource type="Script" uid="uid://bb1aydhbhshsu" path="res://scripts/MainMenu.gd" id="1_2f5qk"]
+[gd_scene format=3 uid="uid://bla0ejk8pprs0"]
 
 [node name="MainMenu" type="CanvasLayer"]
-script = ExtResource("1_2f5qk")
 
 [node name="Title" type="Label" parent="."]
 offset_top = 40.0
